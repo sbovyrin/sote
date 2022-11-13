@@ -8,7 +8,7 @@
 
 _Current iteration:_
 - https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
-- https://go.dev/tour/moretypes/1
+- https://go.dev/tour/methods/1
 
 
 I learn Golang while creating console text-editor according to https://viewsourcecode.org/snaptoken/kilo
@@ -64,7 +64,7 @@ Declare a variable
 Declare and init a variable with implicit type (only inside a function)
 :   `x := 1`
 
-Define a function
+Define a function (first class citizens)
 :   ```
         name              result_type
          |                   |
@@ -93,6 +93,16 @@ Function named return
     }          \
               return x as the function result
     ```
+
+Define closure
+:   ```go
+    func add(x int) func(int) int {
+        return func(y int) int {
+            return x + y
+        }
+    }
+    ```
+
 
 Loop
 :   ```
@@ -152,6 +162,127 @@ Branching `switch..case`
     ```
     > A case may be any expression
     > `switch` without comparable value works like `switch true`
+
+
+### Pointer
+
+Create
+:   `var p *int` and then `p = &x`
+    or
+    `p := &x`
+
+Read (i.e. dereferencing)
+:   `fmt.Println(*p)`
+
+Set value
+:   `*p = 21` and now both `p` and `x` have value 21
+
+
+### Array
+
+Array's length can't be resized after defining.
+
+Define
+:   ```go
+    var xs [6]int // var name [n]T
+    // or with value
+    xs := [6]int{2, 3, 5, 7, 11, 13}
+    ```
+
+### Slice
+
+It's "dynamically-sized array" and pointer of an array's part
+
+Define
+:   ```go
+    zs := []int{1,2,3,4}
+
+    // or from array
+    var zs []int = xs[1:4] // -> [3 5 7]
+    // [x:y] - from `x` position (incl.) till `y` pos (not incl.)
+    // [x:] - from `x` position (incl.) to the end
+    // [:y] - from the beginning to `y` pos (incl.)
+    // [:] - from the beginning to the end.
+    ```
+
+Length of a slice
+:   ```go
+    len(zs) // -> 3
+    ```
+
+    But slices also have capacity property. It's number of elements in pointed array (excluding number of elements before slice start position).
+    ```go
+    cap(zs) // -> 5
+    ```
+
+Extend
+:   ```go
+    zs = zs[:4] // -> [3 5 7 11]
+    ```
+
+Edit
+:   ```go
+    // append value
+    append(zs, 22) // -> [3 5 7 11 22]
+    ```
+
+
+### Map
+
+Maps keys to values
+
+Define
+:   ```go
+    var kv = map[string]int {
+        "age": 22,
+        "maxAge": 67, // last comma is required!!!
+    }
+    ```
+
+Put
+:   ```go
+    kv["age"] = 25
+    ```
+
+Get
+:
+    ```go
+    a := kv["age"]
+    ```
+
+Delete
+:   ```go
+    delete(kv, "maxAge")
+    ```
+
+Check key existence
+:   ```go
+    a, has := kv["mykey"] // -> has is true if mykey is key of the kv
+    ```
+
+
+
+### Struct
+
+It's collection of fields.
+
+Create
+:   ```go
+    type Square struct {
+        x, y int
+    }
+
+    z := Square{2, 2}
+    ```
+
+Read
+:   ```go
+    fmt.Println(z.x) -> 2
+    fmt.Println(z) -> {2 2}
+    ```
+
+> `*` can be omitted in case of access to a struct by pointer
+
 
 ### Creating application
 
