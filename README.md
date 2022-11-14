@@ -8,7 +8,7 @@
 
 _Current iteration:_
 - https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
-- https://go.dev/tour/methods/1
+- https://go.dev/tour/concurrency/1
 
 
 I learn Golang while creating console text-editor according to https://viewsourcecode.org/snaptoken/kilo
@@ -43,10 +43,61 @@ Zero values
 :   `0` for numeric types
     `false` for the boolean type
     `""` for strings
+    `nil` for all
 
 Type conversion
 :   `type(v)` - `float32(x)` converts **x** to float32 type
     > assignments between vars of different type requires an explicit conversion
+
+Type assertion
+:   ```go
+    var x interface{} = 2
+    isStr := x.(string) // -> panic
+    // or
+    val, isStr := x.(string) // -> nil false
+    // but
+    val, isInt := x.(int) // -> 2 true
+    ```
+
+    Flow control based on unknown type:
+    ```go
+    var x interface{} = 2
+    swtich v := x.(type) {
+    case int:
+        // executes if x type is int
+    case string:
+        // executes if x type is string
+    default:
+        // default behaviour
+    }
+    ```
+    > `x.(type)` can be used only in switch statement
+
+### Type parameters
+
+```go
+                           x is the same type T like
+                              any element of s
+        type parameters         /
+        ______|_______        _/_
+func Max[T comparable](s []T, x T) int
+            /          ¯¯|¯¯
+           /             |
+          /          slice of any type T
+         /
+   constraint for type T
+```
+
+Type parameters using to define generic type. Generic type could be useful for implementing generic data structures.
+
+```go
+type List[T any] struct {
+    next *List[T]
+    val T
+}
+```
+
+
 
 
 
@@ -103,6 +154,22 @@ Define closure
     }
     ```
 
+Define method-like function which is associated with specific type described as receier argument.
+:   ```go
+    type Square struct {
+        x, y int
+    }
+
+    //  receiver argument
+    //      |
+    func (s Square) Area() int {
+        return s.x * s.y
+    }
+
+    myvar := Square{2, 2}
+    myvar.Area() // -> 4
+    ```
+    > it is possible declare a method with a receiver whose type is defined in the same package as the method.
 
 Loop
 :   ```
