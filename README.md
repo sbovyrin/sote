@@ -4,11 +4,12 @@
 
 
 - [ ] Open smth under cursor (files, files on specific line and col pos, url)
+- [ ] Show changes, iterate through time by commits (show who and when made those changes) (Git log and blame)
 
 
 _Current iteration:_
 - https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
-- https://go.dev/tour/concurrency/1
+- https://go.dev/tour/concurrency/11
 
 
 I learn Golang while creating console text-editor according to https://viewsourcecode.org/snaptoken/kilo
@@ -349,6 +350,57 @@ Read
     ```
 
 > `*` can be omitted in case of access to a struct by pointer
+
+### Concurrency
+
+Goroutines run in the same address space, so access to shared memory must be synchronized.
+
+```go
+// using
+go func_name('hello', 5)
+
+// use channels to manual sync
+func func_name(x int, c chan int) {
+    z := x + 5
+    c <- z
+}
+//              buffer length (optional)
+//                   |
+c := make(chan int, 100)
+go func_name(2, c)
+go func_name(7, c)
+a, b = <- c, <- c
+close(c) // close the channel
+v, ok := <- c // check whether the channel was closed
+a + b // -> 19
+
+
+// Multiple communication
+//  blocks until one of its cases can run, then it executes that case.
+//  It chooses one at random if multiple are ready.
+select {
+case c <- x:
+    x, y = y, x + y
+case <- quit:
+    fmt.Println("quit")
+    return
+default:
+    // run if no other case is ready
+}
+
+
+// Mutual exclusion (Mutex)
+import "sync"
+
+mu := sync.Mutex
+mu.Lock()
+// change variable, only one goroutine at  a time can access the variable
+defer mu.Unlock()
+//  \
+//  optional, ensure the mutex will be unblocked
+```
+
+> Only the sender should close a channel, but the closing is not required operation, it depends on b-logic.
 
 
 ### Creating application

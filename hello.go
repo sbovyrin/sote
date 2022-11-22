@@ -2,24 +2,24 @@ package main
 
 import (
     "fmt"
-    // "log"
-    // "sb/greetings"
 )
 
-func main() {
-    var x interface{} = 2
-    isStr := x.(string) // -> panic
-    val, isStr := x.(string) // -> nil false
-    val, isInt := x.(int) // -> 2 true
-
-    // log.SetPrefix("greetings: ")
-    // log.SetFlags(0)
-
-    // names := []string{"Sergey", "John", "Jane"}
-    // messages, err := greetings.Hellos(names)
-    // if err != nil {
-    //     log.Fatal(err)
-    // }
-
-    // fmt.Println(messages)
+func sum(s []int, c chan int) {
+	sum := 0
+	for _, v := range s {
+		sum += v
+	}
+	c <- sum // send sum to c
 }
+
+func main() {
+	s := []int{7, 2, 8, -9, 4, 0}
+
+	c := make(chan int)
+	go sum(s[:len(s)/2], c)
+	go sum(s[len(s)/2:], c)
+	x, y := <-c, <-c // receive from c
+
+	fmt.Println(x, y, x+y)
+}
+
